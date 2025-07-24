@@ -22,10 +22,9 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // const res = await axios.post("http://localhost:8080/login", formData, {
-      //   withCredentials: true,
-      // });
-      const res = await axios.post("/login", formData);
+      const res = await axios.post("/login", formData, {
+        withCredentials: true,
+      });
 
       setMessage(res.data.message);
 
