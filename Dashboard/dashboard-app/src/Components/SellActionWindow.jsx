@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useContext } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 
 import GeneralContext from "./GeneralContext";
 
@@ -21,7 +21,7 @@ export default function SellActionWindow({ uid }) {
       return;
     }
     axios
-      .post("http://localhost:8080/newOrders/sell", {
+      .post("/newOrders/sell", {
         name: uid,
         qty,
         price,

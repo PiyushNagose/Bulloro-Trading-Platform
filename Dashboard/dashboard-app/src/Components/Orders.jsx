@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import { Link } from "react-router-dom";
 import { LineChart } from "./LineChart";
 import moment from "moment";
@@ -9,7 +9,7 @@ export default function Orders() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/getOrders")
+      .get("/getOrders")
       .then((res) => {
         console.log("orders = ", res.data);
         setOrders(res.data);

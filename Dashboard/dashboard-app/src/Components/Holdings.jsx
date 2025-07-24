@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../api/axios";
 // import { holdings } from "../Data/Data";
 import { useState, useEffect } from "react";
 import { VerticalBar } from "./VerticalBar";
@@ -7,7 +7,7 @@ export default function Holdings() {
   let [allHoldings, setAllHoldings] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/allHoldings").then((res) => {
+    axios.get("/allHoldings").then((res) => {
       setAllHoldings(res.data);
     });
   }, []);

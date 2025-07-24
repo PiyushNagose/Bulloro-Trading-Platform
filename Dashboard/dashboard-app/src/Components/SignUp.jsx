@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Paper, Box } from "@mui/material";
 
@@ -25,7 +25,7 @@ export default function Signup() {
     try {
       const createdAt = new Date();
       const res = await axios.post(
-        "http://localhost:8080/signup",
+        "/signup",
         { ...formData, createdAt },
         { withCredentials: true }
       );
