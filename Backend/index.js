@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:5173", // ✅ Your frontend's exact origin
+    origin: "https://bulloro-frontend.onrender.com", // ✅ Your frontend's exact origin
     credentials: true, // ✅ Allow cookies/credentials
   })
 );
