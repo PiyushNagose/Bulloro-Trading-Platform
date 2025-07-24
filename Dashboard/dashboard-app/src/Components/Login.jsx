@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Paper } from "@mui/material";
 
@@ -22,9 +22,10 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8080/login", formData, {
-        withCredentials: true,
-      });
+      // const res = await axios.post("http://localhost:8080/login", formData, {
+      //   withCredentials: true,
+      // });
+      const res = await axios.post("/login", formData);
 
       setMessage(res.data.message);
 
