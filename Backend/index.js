@@ -40,6 +40,10 @@ async function main() {
   await mongoose.connect(URL);
 }
 
+app.get("/", (req, res) => {
+  res.send("Backend is running");
+});
+
 app.get("/allHoldings", async (req, res) => {
   const allHoldings = await HoldingsModel.find({});
   res.json(allHoldings);
