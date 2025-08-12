@@ -21,8 +21,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "https://bulloro-frontend.onrender.com", // ✅ Your frontend's exact origin
-    credentials: true, // ✅ Allow cookies/credentials
+    origin: "https://bulloro-frontend.onrender.com",
+    credentials: true,
   })
 );
 app.use(bodyParser.json());
@@ -173,32 +173,27 @@ app.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // 1. Validate input
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // 2. Check if user exists
     const user = await UserModel.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: "Incorrect email or password" });
     }
 
-    // 3. Compare password
     const auth = await bcrypt.compare(password, user.password);
     if (!auth) {
       return res.status(401).json({ message: "Incorrect email or password" });
     }
 
-    // 4. Create and send token
     const token = CreateSecretToken(user._id);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // change to true in production with HTTPS
+      secure: false,
       sameSite: "Lax",
     });
 
-    // 5. Send response
     res.status(200).json({
       message: "User logged in successfully",
       success: true,
@@ -209,7 +204,7 @@ app.post("/login", async (req, res, next) => {
       },
     });
 
-    next(); // only if you're chaining middlewares
+    next();
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Server error during login" });
