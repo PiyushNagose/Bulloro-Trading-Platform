@@ -857,3 +857,50 @@ hr {
 .action:hover {
   background-color: rgb(212, 212, 212);
 }
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  text-align: center;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.app-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+.app-description {
+  font-size: 1.1rem;
+  color: #475569;
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+
+.app-button {
+  background-color: #2563eb; /* blue-600 */
+  color: #ffffff; /* white text for contrast */
+  padding: 0.9rem 1.8rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+
+.app-button:hover {
+  background-color: #1d4ed8; /* blue-700 */
+  transform: translateY(-2px);
+}
+
+.app-button:active {
+  transform: translateY(0);
+}

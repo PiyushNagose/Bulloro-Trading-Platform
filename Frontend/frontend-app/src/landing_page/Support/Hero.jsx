@@ -6,20 +6,24 @@ export default function Hero() {
     >
       <div className="p-4 d-flex justify-content-around">
         <div>
-          <h4>Support Portal</h4>
+          <h4>Bulloro Support Portal</h4>
         </div>
 
         <div>
-          <a href="#">Train Tickets</a>
+          <a href="#" style={{ color: "white" }}>
+            Tickets
+          </a>
         </div>
       </div>
+
       <div className="p-5 row" style={{ marginLeft: "14rem" }}>
-        <div className="col p-5 " style={{ lineHeight: "2.5" }}>
+        <div className="col p-5" style={{ lineHeight: "2.5" }}>
           <h2 className="fs-3 fw-normal mb-3">
-            Search for an answer or browse help topics to create a ticket
+            Search for an answer or browse help topics to create a support
+            ticket
           </h2>
           <input
-            placeholder="Eg: How do i active F&O, why is my order getting rejected."
+            placeholder="Eg: How do I activate F&O, why is my order rejected?"
             type="text"
             style={{
               width: "90%",
@@ -29,26 +33,40 @@ export default function Hero() {
               marginBottom: "0.75rem",
             }}
           />
-          <br></br>
-          <a href="#">Track account opening</a>
-          &nbsp; &nbsp;&nbsp;
-          <a href="#">Track segment activation</a>
-          &nbsp; &nbsp;&nbsp;
-          <a href="#">Intraday</a>
-          <br></br>
-          <a href="#">Margins</a>
-          &nbsp; &nbsp;&nbsp;
-          <a href="#">Kite user manual</a>
+          <br />
+          <a href="#" style={{ color: "white" }}>
+            Track account opening
+          </a>
+          &nbsp;&nbsp;&nbsp;
+          <a href="#" style={{ color: "white" }}>
+            Track segment activation
+          </a>
+          &nbsp;&nbsp;&nbsp;
+          <a href="#" style={{ color: "white" }}>
+            Intraday orders
+          </a>
+          <br />
+          <a href="#" style={{ color: "white" }}>
+            Margins
+          </a>
+          &nbsp;&nbsp;&nbsp;
+          <a href="#" style={{ color: "white" }}>
+            Platform user guide
+          </a>
         </div>
 
         <div className="col p-5" style={{ lineHeight: "2.5" }}>
-          <h2 className="fs-3 fw-semibold">Featured</h2>
+          <h2 className="fs-3 fw-semibold">Featured Articles</h2>
           <ol>
             <li>
-              <a href="#">Current Takeovers and Delesting - January 2024</a>
+              <a href="#" style={{ color: "white" }}>
+                Current Takeovers and Delistings - 2025
+              </a>
             </li>
             <li>
-              <a href="#">Latest Intraday Leverages - MIS & CO</a>
+              <a href="#" style={{ color: "white" }}>
+                Latest Intraday Margins & Leverages
+              </a>
             </li>
           </ol>
         </div>

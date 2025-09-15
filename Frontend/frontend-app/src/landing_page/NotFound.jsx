@@ -4,7 +4,7 @@ export default function NotFound() {
       <h1>404</h1>
       <h2>Page Not Found!</h2>
       <p className="text-muted">
-        We couldn’t find the page you were looking for. Visit Zerodha’s home
+        We couldn’t find the page you were looking for. Visit Bulloro's home
         page
       </p>
     </div>

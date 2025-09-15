@@ -1,15 +1,18 @@
+import "./App.css";
+
 export default function App() {
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center p-6">
-      <h1 className="text-2xl font-bold mb-4">Bulloro Trading Platform</h1>
-      <p className="text-gray-600 mb-6">
-        Click below to explore the full trading platform site.
+    <div className="app-container">
+      <h1 className="app-title">Bulloro Trading Platform</h1>
+      <p className="app-description">
+        Discover our complete trading platform experience. Click below to
+        explore the live site.
       </p>
       <a
         href="https://bulloro-trading-platform.onrender.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+        className="app-button"
       >
         Visit Trading Platform
       </a>

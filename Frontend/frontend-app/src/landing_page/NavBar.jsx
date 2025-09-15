@@ -9,11 +9,7 @@ export default function NavBar() {
           role="search"
         >
           <Link class="navbar-brand" className="mx-5" to="/">
-            <img
-              src="Media/Images/logo.svg"
-              alt="Logo"
-              style={{ width: "20%" }}
-            />
+            <img src="Media/Images/logo.png" alt="Logo" className="logo" />
           </Link>
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">

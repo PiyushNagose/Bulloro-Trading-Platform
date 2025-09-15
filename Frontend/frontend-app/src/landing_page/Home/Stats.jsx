@@ -3,43 +3,42 @@ export default function Stats() {
     <div className="container mt-5">
       <div className="row mt-5">
         <div className="col p-5">
-          <h1 className="fs-1 mb-5">Trust with confidence</h1>
+          <h1 className="fs-1 mb-5">Trade & Invest with Confidence</h1>
           <h2 className="fs-4">Customer-first always</h2>
           <p className="text-muted mt-3">
-            That's why 1.6+ crore customers trust Zerodha with ~ ₹6 lakh crores
-            of equity investments and contribute to 15% of daily retail exchange
-            volumes in India.
+            Thousands of traders trust Bulloro to manage their investments
+            across stocks, ETFs, mutual funds, and more, benefiting from our
+            technology-driven platform.
           </p>
-          <h2 className="fs-4 mt-5">No spam or gimmicks</h2>
+          <h2 className="fs-4 mt-5">No gimmicks, only transparency</h2>
           <p className="text-muted mt-3">
-            No gimmicks, spam, "gamification", or annoying push notifications.
-            High quality apps that you use at your pace, the way you like. Our
-            philosophies.
+            Bulloro offers simple and clear pricing, zero hidden charges, and no
+            unnecessary notifications. Tools designed for your pace.
           </p>
-          <h2 className="fs-4 mt-5">The Zerodha universe</h2>
+          <h2 className="fs-4 mt-5">The Bulloro ecosystem</h2>
           <p className="text-muted mt-3">
-            Not just an app, but a whole ecosystem. Our investments in 30+
-            fintech startups offer you tailored services specific to your needs.
+            Not just a trading app, but a full ecosystem of investing solutions,
+            educational content, and community-driven features to empower you.
           </p>
-          <h2 className="fs-4 mt-5">Do better with money</h2>
+          <h2 className="fs-4 mt-5">Grow your wealth smarter</h2>
           <p className="text-muted mt-3">
-            With initiatives like Nudge and Kill Switch, we don't just
-            facilitate transactions, but actively help you do better with your
-            money.
+            Bulloro provides actionable insights and intuitive tools to help you
+            make informed financial decisions and grow your money effectively.
           </p>
         </div>
         <div className="col p-5">
           <img
             src="Media/Images/ecosystem.png"
             style={{ width: "100%" }}
-            alt="Ecosystem Image"
+            alt="Bulloro Ecosystem"
           />
           <div className="mt-4 mx-5">
             <a href="#" className="mx-5" style={{ textDecoration: "none" }}>
-              Explore our products <i class="fa-solid fa-arrow-right"></i>
+              Explore Bulloro products{" "}
+              <i className="fa-solid fa-arrow-right"></i>
             </a>
             <a href="#" className="mx-3" style={{ textDecoration: "none" }}>
-              Try Kite demo <i class="fa-solid fa-arrow-right"></i>
+              Try Bulloro demo <i className="fa-solid fa-arrow-right"></i>
             </a>
           </div>
         </div>

@@ -6,43 +6,44 @@ export default function Hero() {
         style={{ padding: "5rem" }}
       >
         <h1 className="fs-2">
-          We pioneered the discount broking model in India.<br></br> Now, we are
-          breaking ground with our technology.
+          We are redefining the future of trading.
+          <br />
+          Bulloro brings speed, simplicity, and innovation to the markets.
         </h1>
       </div>
       <div className="row mt-5 p-5" style={{ lineHeight: "2" }}>
         <div className="col">
           <p>
-            We kick-started operations on the 15th of August, 2010 with the goal
-            of breaking all barriers that traders and investors face in India in
-            terms of cost, support, and technology. We named the company
-            Zerodha, a combination of Zero and "Rodha", the Sanskrit word for
-            barrier.
+            Bulloro started with a simple mission: to remove the complexities
+            that traders and investors face while navigating financial markets.
+            Our platform is built with transparency, speed, and accessibility at
+            its core.
           </p>
           <p>
-            Today, our disruptive pricing models and in-house technology have
-            made us the biggest stock broker in India.
+            With our modern pricing models and cutting-edge technology, Bulloro
+            is becoming the preferred choice for a growing community of traders
+            and investors across the country.
           </p>
           <p>
-            Over 1.6+ crore clients place billions of orders every year through
-            our powerful ecosystem of investment platforms, contributing over
-            15% of all Indian retail trading volumes.
+            Every day, thousands of users trust Bulloro to execute trades
+            securely and efficiently, forming the foundation of a smarter,
+            technology-driven trading ecosystem.
           </p>
         </div>
         <div className="col">
           <p>
-            In addition, we run a number of popular open online educational and
-            community initiatives to empower retail traders and investors.
+            Beyond trading, Bulloro is committed to building an ecosystem that
+            supports learning and collaboration for retail investors and
+            professionals alike.
           </p>
           <p>
-            <a href="#">Rainmatter</a>, our fintech fund and incubator, has
-            invested in several fintech startups with the goal of growing the
-            Indian capital markets.
+            We are also investing in future-focused innovations, exploring new
+            ideas and tools that will continue to empower our users to make
+            better financial decisions.
           </p>
           <p>
-            And yet, we are always up to something new every day. Catch up on
-            the latest updates on our blog or see what the media is saying about
-            us or learn more about our business and product philosophies.
+            At Bulloro, innovation never stops. Follow our journey as we build
+            the next era of trading—simple, powerful, and for everyone.
           </p>
         </div>
       </div>
