@@ -1,16 +1,24 @@
 import { Link } from "react-router-dom";
-import { useState, useContext } from "react";
-import AuthContext from "./AuthContext";  // ✅ Import AuthContext
+import { useState, useEffect } from "react";
 
 export default function Menu() {
   const [selectMenu, setSelectMenu] = useState(0);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [user, setUser] = useState(null); // null = not logged in
 
-  // ✅ Get user + logout from AuthContext
-  const { user, logout } = useContext(AuthContext);
+  useEffect(() => {
+    // Optionally check localStorage or backend for logged-in user
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) setUser(storedUser);
+  }, []);
 
-  const handelClick = (index) => setSelectMenu(index);
-  const profileClick = () => setIsDropDownOpen(!isDropDownOpen);
+  const handelClick = (index) => {
+    setSelectMenu(index);
+  };
+
+  const profileClick = () => {
+    setIsDropDownOpen(!isDropDownOpen);
+  };
 
   const menuClass = "menu";
   const activeMenuClass = "menu selected";
@@ -29,42 +37,66 @@ export default function Menu() {
       <div className="menus">
         <ul>
           <li>
-            <Link onClick={() => handelClick(0)} to="/">
+            <Link
+              style={{ textDecoration: "none" }}
+              onClick={() => handelClick(0)}
+              to="/"
+            >
               <p className={selectMenu === 0 ? activeMenuClass : menuClass}>
                 Dashboard
               </p>
             </Link>
           </li>
           <li>
-            <Link onClick={() => handelClick(1)} to="/orders">
+            <Link
+              style={{ textDecoration: "none" }}
+              onClick={() => handelClick(1)}
+              to="/orders"
+            >
               <p className={selectMenu === 1 ? activeMenuClass : menuClass}>
                 Orders
               </p>
             </Link>
           </li>
           <li>
-            <Link onClick={() => handelClick(2)} to="/holdings">
+            <Link
+              style={{ textDecoration: "none" }}
+              onClick={() => handelClick(2)}
+              to="/holdings"
+            >
               <p className={selectMenu === 2 ? activeMenuClass : menuClass}>
                 Holdings
               </p>
             </Link>
           </li>
           <li>
-            <Link onClick={() => handelClick(3)} to="/positions">
+            <Link
+              style={{ textDecoration: "none" }}
+              onClick={() => handelClick(3)}
+              to="/positions"
+            >
               <p className={selectMenu === 3 ? activeMenuClass : menuClass}>
                 Positions
               </p>
             </Link>
           </li>
           <li>
-            <Link onClick={() => handelClick(4)} to="/funds">
+            <Link
+              style={{ textDecoration: "none" }}
+              onClick={() => handelClick(4)}
+              to="/funds"
+            >
               <p className={selectMenu === 4 ? activeMenuClass : menuClass}>
                 Funds
               </p>
             </Link>
           </li>
           <li>
-            <Link onClick={() => handelClick(5)} to="/apps">
+            <Link
+              style={{ textDecoration: "none" }}
+              onClick={() => handelClick(5)}
+              to="/apps"
+            >
               <p className={selectMenu === 5 ? activeMenuClass : menuClass}>
                 Apps
               </p>
@@ -73,7 +105,6 @@ export default function Menu() {
         </ul>
         <hr />
 
-        {/* Profile Section */}
         <div
           className="profile"
           onClick={profileClick}
@@ -110,7 +141,8 @@ export default function Menu() {
               ) : (
                 <button
                   onClick={() => {
-                    logout(); // ✅ Now uses AuthContext
+                    localStorage.removeItem("user");
+                    setUser(null); // ✅ Reset state
                     setIsDropDownOpen(false);
                   }}
                   className="dropdown-item"
