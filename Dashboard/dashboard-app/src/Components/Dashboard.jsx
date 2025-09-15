@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import { useContext } from "react";
 
 import App from "./App";
 import Funds from "./Funds";
@@ -9,10 +8,17 @@ import Positions from "./Positions";
 import Summary from "./Summary";
 import WatchList from "./WatchList";
 import { GeneralContextProvider } from "./GeneralContext";
-import AuthContext from "./AuthContext";
+import { useEffect, useState } from "react";
 
 export default function Dashboard() {
-  const { isLoggedIn } = useContext(AuthContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser && storedUser.username) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   return (
     <GeneralContextProvider>
