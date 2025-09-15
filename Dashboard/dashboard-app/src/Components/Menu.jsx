@@ -1,27 +1,15 @@
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import AuthContext from "./AuthContext";
 
 export default function Menu() {
   const [selectMenu, setSelectMenu] = useState(0);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-  const [user, setUser] = useState(null); // null = not logged in
 
-  useEffect(() => {
-    // Optionally check localStorage or backend for logged-in user
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) setUser(storedUser);
-  }, []);
+  const { user, logout } = useContext(AuthContext);
 
-  const handelClick = (index) => {
-    setSelectMenu(index);
-  };
-
-  const profileClick = () => {
-    setIsDropDownOpen(!isDropDownOpen);
-  };
-
-  const menuClass = "menu";
-  const activeMenuClass = "menu selected";
+  const handelClick = (index) => setSelectMenu(index);
+  const profileClick = () => setIsDropDownOpen(!isDropDownOpen);
 
   const getInitials = (username) => {
     if (!username) return "US";
@@ -37,67 +25,43 @@ export default function Menu() {
       <div className="menus">
         <ul>
           <li>
-            <Link
-              style={{ textDecoration: "none" }}
-              onClick={() => handelClick(0)}
-              to="/"
-            >
-              <p className={selectMenu === 0 ? activeMenuClass : menuClass}>
+            <Link onClick={() => handelClick(0)} to="/">
+              <p className={selectMenu === 0 ? "menu selected" : "menu"}>
                 Dashboard
               </p>
             </Link>
           </li>
           <li>
-            <Link
-              style={{ textDecoration: "none" }}
-              onClick={() => handelClick(1)}
-              to="/orders"
-            >
-              <p className={selectMenu === 1 ? activeMenuClass : menuClass}>
+            <Link onClick={() => handelClick(1)} to="/orders">
+              <p className={selectMenu === 1 ? "menu selected" : "menu"}>
                 Orders
               </p>
             </Link>
           </li>
           <li>
-            <Link
-              style={{ textDecoration: "none" }}
-              onClick={() => handelClick(2)}
-              to="/holdings"
-            >
-              <p className={selectMenu === 2 ? activeMenuClass : menuClass}>
+            <Link onClick={() => handelClick(2)} to="/holdings">
+              <p className={selectMenu === 2 ? "menu selected" : "menu"}>
                 Holdings
               </p>
             </Link>
           </li>
           <li>
-            <Link
-              style={{ textDecoration: "none" }}
-              onClick={() => handelClick(3)}
-              to="/positions"
-            >
-              <p className={selectMenu === 3 ? activeMenuClass : menuClass}>
+            <Link onClick={() => handelClick(3)} to="/positions">
+              <p className={selectMenu === 3 ? "menu selected" : "menu"}>
                 Positions
               </p>
             </Link>
           </li>
           <li>
-            <Link
-              style={{ textDecoration: "none" }}
-              onClick={() => handelClick(4)}
-              to="/funds"
-            >
-              <p className={selectMenu === 4 ? activeMenuClass : menuClass}>
+            <Link onClick={() => handelClick(4)} to="/funds">
+              <p className={selectMenu === 4 ? "menu selected" : "menu"}>
                 Funds
               </p>
             </Link>
           </li>
           <li>
-            <Link
-              style={{ textDecoration: "none" }}
-              onClick={() => handelClick(5)}
-              to="/apps"
-            >
-              <p className={selectMenu === 5 ? activeMenuClass : menuClass}>
+            <Link onClick={() => handelClick(5)} to="/apps">
+              <p className={selectMenu === 5 ? "menu selected" : "menu"}>
                 Apps
               </p>
             </Link>
@@ -116,19 +80,7 @@ export default function Menu() {
           <p className="username">{user ? user.username : "Guest"}</p>
 
           {isDropDownOpen && (
-            <div
-              className="dropdown"
-              style={{
-                position: "absolute",
-                top: "60px",
-                right: "0",
-                background: "#fff",
-                boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-                borderRadius: "6px",
-                padding: "10px",
-                zIndex: 10,
-              }}
-            >
+            <div className="dropdown">
               {!user ? (
                 <>
                   <Link className="dropdown-item" to="/signup">
@@ -139,14 +91,7 @@ export default function Menu() {
                   </Link>
                 </>
               ) : (
-                <button
-                  onClick={() => {
-                    localStorage.removeItem("user");
-                    setUser(null); // ✅ Reset state
-                    setIsDropDownOpen(false);
-                  }}
-                  className="dropdown-item"
-                >
+                <button onClick={logout} className="dropdown-item">
                   Log Out
                 </button>
               )}
