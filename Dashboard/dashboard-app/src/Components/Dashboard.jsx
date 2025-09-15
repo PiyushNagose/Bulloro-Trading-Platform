@@ -1,4 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import App from "./App";
 import Funds from "./Funds";
@@ -8,17 +9,18 @@ import Positions from "./Positions";
 import Summary from "./Summary";
 import WatchList from "./WatchList";
 import { GeneralContextProvider } from "./GeneralContext";
-import { useEffect, useState } from "react";
 
 export default function Dashboard() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser && storedUser.username) {
-      setIsLoggedIn(true);
+      setUser(storedUser);
     }
   }, []);
+
+  const isLoggedIn = !!user;
 
   return (
     <GeneralContextProvider>
@@ -29,12 +31,14 @@ export default function Dashboard() {
           <Routes>
             {isLoggedIn ? (
               <>
-                <Route exact path="/" element={<Summary />} />
+                <Route path="/" element={<Summary />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/holdings" element={<Holdings />} />
                 <Route path="/positions" element={<Positions />} />
                 <Route path="/funds" element={<Funds />} />
                 <Route path="/apps" element={<App />} />
+                {/* ✅ redirect unknown routes to dashboard */}
+                <Route path="*" element={<Navigate to="/" replace />} />
               </>
             ) : (
               <Route

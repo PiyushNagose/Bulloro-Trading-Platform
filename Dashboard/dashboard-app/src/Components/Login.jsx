@@ -101,7 +101,7 @@ export default function Login() {
         </form>
 
         <Typography variant="body2" align="center" className="mt-3 text-muted">
-          Don't have an account?{" "}
+          Don't have an account?
           <a href="/signup" className="text-decoration-none text-primary">
             Sign up here
           </a>
