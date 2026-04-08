@@ -22,13 +22,19 @@ ChartJS.register(
 
 const options = {
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       position: "top",
     },
     title: {
       display: true,
-      text: "Chart.js Line Chart",
+      text: "Order Price Timeline",
+    },
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
     },
   },
 };

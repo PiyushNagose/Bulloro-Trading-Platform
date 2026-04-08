@@ -61,41 +61,52 @@ export default function Orders() {
           </Link>
         </div>
       ) : (
-        <div className="order-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Instrument</th>
-                <th>Qty.</th>
-                <th>Price</th>
-                <th>Mode</th>
-                <th>Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order, index) => {
-                const isBuy = order.mode === "BUY";
-                const modeClass = isBuy ? "profit" : "loss";
+        <>
+          <div className="order-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Instrument</th>
+                  <th>Qty.</th>
+                  <th>Price</th>
+                  <th>Mode</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order, index) => {
+                  const isBuy = order.mode === "BUY";
+                  const modeClass = isBuy ? "profit" : "loss";
 
-                return (
-                  <tr key={order._id || `${order.name}-${index}`}>
-                    <td>{order.name}</td>
-                    <td>{Number(order.qty) || 0}</td>
-                    <td>{(Number(order.price) || 0).toFixed(2)}</td>
-                    <td className={modeClass}>{order.mode}</td>
-                    <td>
-                      {order.createdAt
-                        ? new Date(order.createdAt).toLocaleString()
-                        : "--"}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                  return (
+                    <tr key={order._id || `${order.name}-${index}`}>
+                      <td>{order.name}</td>
+                      <td>{Number(order.qty) || 0}</td>
+                      <td>{(Number(order.price) || 0).toFixed(2)}</td>
+                      <td className={modeClass}>{order.mode}</td>
+                      <td>
+                        {order.createdAt
+                          ? new Date(order.createdAt).toLocaleString()
+                          : "--"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="chart-card">
+            <div className="chart-header">
+              <h4>Order Trends</h4>
+              <p>Buy and sell prices across your recent activity</p>
+            </div>
+            <div className="chart-container">
+              <LineChart data={data} />
+            </div>
+          </div>
+        </>
       )}
-      <LineChart data={data} />
     </div>
   );
 }

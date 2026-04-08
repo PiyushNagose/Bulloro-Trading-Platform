@@ -857,6 +857,37 @@ hr {
 .action:hover {
   background-color: rgb(212, 212, 212);
 }
+
+.chart-card,
+.empty-card {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+.chart-header h4,
+.empty-card h4 {
+  margin: 0 0 8px;
+  color: #334155;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.chart-header p,
+.empty-card p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.chart-container {
+  position: relative;
+  height: 340px;
+  margin-top: 18px;
+}
 .app-container {
   display: flex;
   flex-direction: column;
