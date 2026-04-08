@@ -2,6 +2,12 @@ const { Schema } = require("mongoose");
 
 const PositionsSchema = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+      index: true,
+    },
     product: {
       type: String,
       required: true,

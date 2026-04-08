@@ -154,25 +154,29 @@ app.post("/logout", (req, res) => {
   res.status(200).json({ success: true, message: "Logged out successfully" });
 });
 
-app.get("/allHoldings", async (req, res) => {
+app.get("/allHoldings", authenticateUser, async (req, res) => {
   try {
-    const allHoldings = await HoldingsModel.find({}).sort({ name: 1 });
+    const allHoldings = await HoldingsModel.find({ userId: req.user._id }).sort({
+      name: 1,
+    });
     res.json(allHoldings);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch holdings" });
   }
 });
 
-app.get("/allPositions", async (req, res) => {
+app.get("/allPositions", authenticateUser, async (req, res) => {
   try {
-    const allPositions = await PositionsModel.find({}).sort({ name: 1 });
+    const allPositions = await PositionsModel.find({ userId: req.user._id }).sort({
+      name: 1,
+    });
     res.json(allPositions);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch positions" });
   }
 });
 
-app.post("/newOrders/buy", async (req, res) => {
+app.post("/newOrders/buy", authenticateUser, async (req, res) => {
   const orderInput = normalizeOrderInput(req.body);
   const validationError = validateOrderInput(orderInput);
 
@@ -181,8 +185,9 @@ app.post("/newOrders/buy", async (req, res) => {
   }
 
   try {
+    const userId = req.user._id;
     const { name, qty, price, mode } = orderInput;
-    const existingHolding = await HoldingsModel.findOne({ name });
+    const existingHolding = await HoldingsModel.findOne({ userId, name });
 
     if (existingHolding) {
       const totalQty = existingHolding.qty + qty;
@@ -199,6 +204,7 @@ app.post("/newOrders/buy", async (req, res) => {
     } else {
       const { currentPrice, net, day } = calculateMetrics(price, price);
       const newHolding = new HoldingsModel({
+        userId,
         name,
         qty,
         avg: price,
@@ -210,7 +216,7 @@ app.post("/newOrders/buy", async (req, res) => {
       await newHolding.save();
     }
 
-    const newOrder = new OrdersModel({ name, qty, price, mode });
+    const newOrder = new OrdersModel({ userId, name, qty, price, mode });
     await newOrder.save();
 
     res.status(201).json({
@@ -223,7 +229,7 @@ app.post("/newOrders/buy", async (req, res) => {
   }
 });
 
-app.post("/newOrders/sell", async (req, res) => {
+app.post("/newOrders/sell", authenticateUser, async (req, res) => {
   const orderInput = normalizeOrderInput(req.body);
   const validationError = validateOrderInput(orderInput);
 
@@ -232,8 +238,9 @@ app.post("/newOrders/sell", async (req, res) => {
   }
 
   try {
+    const userId = req.user._id;
     const { name, qty, price, mode } = orderInput;
-    const holding = await HoldingsModel.findOne({ name });
+    const holding = await HoldingsModel.findOne({ userId, name });
 
     if (!holding) {
       return res.status(404).json({ message: "Holding not found for this stock" });
@@ -255,7 +262,7 @@ app.post("/newOrders/sell", async (req, res) => {
       await holding.save();
     }
 
-    const newOrder = new OrdersModel({ name, qty, price, mode });
+    const newOrder = new OrdersModel({ userId, name, qty, price, mode });
     await newOrder.save();
 
     res.status(201).json({
@@ -268,9 +275,11 @@ app.post("/newOrders/sell", async (req, res) => {
   }
 });
 
-app.get("/getOrders", async (req, res) => {
+app.get("/getOrders", authenticateUser, async (req, res) => {
   try {
-    const orders = await OrdersModel.find().sort({ createdAt: -1 });
+    const orders = await OrdersModel.find({ userId: req.user._id }).sort({
+      createdAt: -1,
+    });
     res.json(orders);
   } catch (err) {
     console.log(err);
