@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import SellActionWindow from "./SellActionWindow";
 
 const GeneralContext = React.createContext({
-  openBuyWindow: (uid) => {},
-  openSellWindow: (uid) => {},
+  openBuyWindow: () => {},
+  openSellWindow: () => {},
   closeBuyWindow: () => {},
   closeSellWindow: () => {},
 });

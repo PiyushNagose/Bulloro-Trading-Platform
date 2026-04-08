@@ -1,7 +1,9 @@
 import { useState } from "react";
-import axios from "../api/axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Paper, Box } from "@mui/material";
+
+import axios from "../api/axios";
+import { setStoredUser } from "../utils/auth";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -29,12 +31,15 @@ export default function Signup() {
         { ...formData, createdAt },
         { withCredentials: true }
       );
+
       setMessage(res.data.message);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      setStoredUser(res.data.user);
       navigate("/");
     } catch (error) {
       console.error(error);
-      setMessage("Signup failed. Please try again.");
+      setMessage(
+        error.response?.data?.message || "Signup failed. Please try again."
+      );
     }
   };
 
@@ -110,10 +115,10 @@ export default function Signup() {
         </form>
 
         <Typography variant="body2" align="center" className="mt-3">
-          Already have an account?
-          <a href="/login" className="text-decoration-none text-primary">
+          Already have an account?{" "}
+          <Link to="/login" className="text-decoration-none text-primary">
             Login here
-          </a>
+          </Link>
         </Typography>
       </Paper>
     </div>

@@ -2,46 +2,46 @@ import { Link } from "react-router-dom";
 
 export default function NavBar() {
   return (
-    <nav class="navbar navbar-expand-lg border p-3">
-      <div class="container">
-        <form
-          class="d-flex align-items-center justify-content-center"
-          role="search"
+    <nav className="navbar navbar-expand-lg border p-3">
+      <div className="container">
+        <div
+          className="d-flex align-items-center justify-content-center"
+          role="navigation"
         >
-          <Link class="navbar-brand" className="mx-5" to="/">
+          <Link className="navbar-brand mx-5" to="/">
             <img src="Media/Images/logo.png" alt="Logo" className="logo" />
           </Link>
 
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mb-lg-0 mr-5">
-              <li class="nav-item mx-3"></li>
-              <Link class="nav-link active" aria-current="page" to="/signup">
-                Signup
-              </Link>
-              <li />
-              <li class="nav-item mx-3"></li>
-              <Link class="nav-link active" aria-current="page" to="/about">
-                About
-              </Link>
-              <li />
-              <li class="nav-item mx-3"></li>
-              <Link class="nav-link active" aria-current="page" to="/products">
-                Products
-              </Link>
-              <li />
-              <li class="nav-item mx-3"></li>
-              <Link class="nav-link active" aria-current="page" to="/pricing">
-                Pricing
-              </Link>
-              <li />
-              <li class="nav-item mx-3"></li>
-              <Link class="nav-link active" aria-current="page" to="/support">
-                Support
-              </Link>
-              <li />
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul className="navbar-nav mb-lg-0 mr-5">
+              <li className="nav-item mx-3">
+                <Link className="nav-link active" aria-current="page" to="/signup">
+                  Signup
+                </Link>
+              </li>
+              <li className="nav-item mx-3">
+                <Link className="nav-link active" aria-current="page" to="/about">
+                  About
+                </Link>
+              </li>
+              <li className="nav-item mx-3">
+                <Link className="nav-link active" aria-current="page" to="/products">
+                  Products
+                </Link>
+              </li>
+              <li className="nav-item mx-3">
+                <Link className="nav-link active" aria-current="page" to="/pricing">
+                  Pricing
+                </Link>
+              </li>
+              <li className="nav-item mx-3">
+                <Link className="nav-link active" aria-current="page" to="/support">
+                  Support
+                </Link>
+              </li>
             </ul>
           </div>
-        </form>
+        </div>
       </div>
     </nav>
   );

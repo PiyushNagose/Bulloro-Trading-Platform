@@ -1,15 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+
+import axios from "../api/axios";
+import { clearStoredUser, getStoredUser } from "../utils/auth";
 
 export default function Menu() {
   const [selectMenu, setSelectMenu] = useState(0);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-  const [user, setUser] = useState(null); // null = not logged in
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Optionally check localStorage or backend for logged-in user
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) setUser(storedUser);
+    const storedUser = getStoredUser();
+    if (storedUser) {
+      setUser(storedUser);
+    }
   }, []);
 
   const handelClick = (index) => {
@@ -18,6 +23,19 @@ export default function Menu() {
 
   const profileClick = () => {
     setIsDropDownOpen(!isDropDownOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("/logout");
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      clearStoredUser();
+      setUser(null);
+      setIsDropDownOpen(false);
+      navigate("/login");
+    }
   };
 
   const menuClass = "menu";
@@ -140,12 +158,9 @@ export default function Menu() {
                 </>
               ) : (
                 <button
-                  onClick={() => {
-                    localStorage.removeItem("user");
-                    setUser(null); // ✅ Reset state
-                    setIsDropDownOpen(false);
-                  }}
+                  onClick={handleLogout}
                   className="dropdown-item"
+                  type="button"
                 >
                   Log Out
                 </button>

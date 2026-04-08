@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from "../api/axios";
 import { Link } from "react-router-dom";
-import { LineChart } from "./LineChart";
 import moment from "moment";
+
+import axios from "../api/axios";
+import { LineChart } from "./LineChart";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -11,14 +12,10 @@ export default function Orders() {
     axios
       .get("/getOrders")
       .then((res) => {
-        console.log("orders = ", res.data);
-        setOrders(res.data);
+        setOrders(Array.isArray(res.data) ? res.data : []);
       })
       .catch((err) => console.error("Error fetching orders", err));
   }, []);
-
-  const buyOrders = orders.filter((order) => order.mode === "BUY");
-  const sellOrders = orders.filter((order) => order.mode === "SELL");
 
   const labels = orders.map((order) =>
     moment(order.createdAt).format("MMM D, h:mm A")
@@ -58,7 +55,7 @@ export default function Orders() {
 
       {orders.length === 0 ? (
         <div className="no-orders">
-          <p>You haven't placed any orders yet</p>
+          <p>You haven&apos;t placed any orders yet</p>
           <Link to="/" className="btn">
             Get started
           </Link>
@@ -81,15 +78,15 @@ export default function Orders() {
                 const modeClass = isBuy ? "profit" : "loss";
 
                 return (
-                  <tr key={index}>
+                  <tr key={order._id || `${order.name}-${index}`}>
                     <td>{order.name}</td>
-                    <td>{order.qty}</td>
-                    <td>{order.price.toFixed(2)}</td>
+                    <td>{Number(order.qty) || 0}</td>
+                    <td>{(Number(order.price) || 0).toFixed(2)}</td>
                     <td className={modeClass}>{order.mode}</td>
                     <td>
                       {order.createdAt
                         ? new Date(order.createdAt).toLocaleString()
-                        : "—"}
+                        : "--"}
                     </td>
                   </tr>
                 );

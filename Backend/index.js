@@ -3,7 +3,6 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const bodyParser = require("body-parser");
 const { HoldingsModel } = require("./Models/HoldingsModel");
 const { PositionsModel } = require("./Models/PositionsModel");
 const { OrdersModel } = require("./Models/OrdersModel");
@@ -11,24 +10,49 @@ const UserModel = require("./Models/UserModel");
 const { CreateSecretToken } = require("./Util/CreateSecretToken");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const PORT = process.env.PORT || 8080;
 const URL = process.env.MONGO_URL;
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 const app = express();
+
+const allowedOrigins = (process.env.CLIENT_ORIGINS ||
+  [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://bulloro-frontend.onrender.com",
+    "https://bulloro-trading-platform.onrender.com",
+  ].join(","))
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: NODE_ENV === "production" ? "none" : "lax",
+  secure: NODE_ENV === "production",
+  maxAge: 3 * 24 * 60 * 60 * 1000,
+};
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "https://bulloro-frontend.onrender.com",
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("CORS origin is not allowed"));
+    },
     credentials: true,
   })
 );
-app.use(bodyParser.json());
 app.use(cookieParser());
 
-main()
+connectToDatabase()
   .then(() => {
     console.log("Connection Successful!");
   })
@@ -36,99 +60,211 @@ main()
     console.log(err);
   });
 
-async function main() {
+async function connectToDatabase() {
+  if (!URL) {
+    throw new Error("MONGO_URL is not configured");
+  }
+
   await mongoose.connect(URL);
 }
 
+const calculateMetrics = (price, avg) => {
+  const currentPrice = Number((price + (Math.random() * 10 - 5)).toFixed(2));
+  const net = `${(((currentPrice - avg) / avg) * 100).toFixed(2)}%`;
+  const day = `${(Math.random() * 4 - 1).toFixed(2)}%`;
+
+  return {
+    currentPrice,
+    net,
+    day,
+  };
+};
+
+const normalizeOrderInput = (payload = {}) => {
+  const name = String(payload.name || "")
+    .trim()
+    .toUpperCase();
+  const qty = Number(payload.qty);
+  const price = Number(payload.price);
+  const mode = String(payload.mode || "")
+    .trim()
+    .toUpperCase();
+
+  return { name, qty, price, mode };
+};
+
+const validateOrderInput = ({ name, qty, price, mode }) => {
+  if (!name || !Number.isFinite(qty) || qty <= 0 || !Number.isFinite(price) || price <= 0) {
+    return "Name, qty and price must be valid values";
+  }
+
+  if (!["BUY", "SELL"].includes(mode)) {
+    return "Mode must be BUY or SELL";
+  }
+
+  return null;
+};
+
+const getSafeUser = (user) => ({
+  _id: user._id,
+  username: user.username,
+  email: user.email,
+  createdAt: user.createdAt,
+});
+
+const authenticateUser = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
+    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+    const user = await UserModel.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid or expired session" });
+  }
+};
+
 app.get("/", (req, res) => {
-  res.send("Backend is running");
+  res.json({
+    message: "Backend is running",
+    status: "ok",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get("/auth/me", authenticateUser, (req, res) => {
+  res.status(200).json({
+    success: true,
+    user: getSafeUser(req.user),
+  });
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("token", cookieOptions);
+  res.status(200).json({ success: true, message: "Logged out successfully" });
 });
 
 app.get("/allHoldings", async (req, res) => {
-  const allHoldings = await HoldingsModel.find({});
-  res.json(allHoldings);
+  try {
+    const allHoldings = await HoldingsModel.find({}).sort({ name: 1 });
+    res.json(allHoldings);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch holdings" });
+  }
 });
 
 app.get("/allPositions", async (req, res) => {
-  const allPositions = await PositionsModel.find({});
-  res.json(allPositions);
+  try {
+    const allPositions = await PositionsModel.find({}).sort({ name: 1 });
+    res.json(allPositions);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch positions" });
+  }
 });
 
 app.post("/newOrders/buy", async (req, res) => {
-  const { name, qty, price, mode } = req.body;
-  if (!name || !qty || !price) {
-    return res.status(400).send("Missing required fields");
+  const orderInput = normalizeOrderInput(req.body);
+  const validationError = validateOrderInput(orderInput);
+
+  if (validationError) {
+    return res.status(400).json({ message: validationError });
   }
 
   try {
-    const currentPrice = price + (Math.random() * 10 - 5);
-    const avg = price;
-    const net = (((currentPrice - avg) / avg) * 100).toFixed(2) + "%";
-    const day = (Math.random() * 4 - 1).toFixed(2) + "%";
+    const { name, qty, price, mode } = orderInput;
+    const existingHolding = await HoldingsModel.findOne({ name });
+
+    if (existingHolding) {
+      const totalQty = existingHolding.qty + qty;
+      const weightedAverage =
+        (existingHolding.avg * existingHolding.qty + price * qty) / totalQty;
+      const { currentPrice, net, day } = calculateMetrics(price, weightedAverage);
+
+      existingHolding.qty = Number(totalQty.toFixed(2));
+      existingHolding.avg = Number(weightedAverage.toFixed(2));
+      existingHolding.price = currentPrice;
+      existingHolding.net = net;
+      existingHolding.day = day;
+      await existingHolding.save();
+    } else {
+      const { currentPrice, net, day } = calculateMetrics(price, price);
+      const newHolding = new HoldingsModel({
+        name,
+        qty,
+        avg: price,
+        price: currentPrice,
+        net,
+        day,
+      });
+
+      await newHolding.save();
+    }
 
     const newOrder = new OrdersModel({ name, qty, price, mode });
     await newOrder.save();
 
-    const newHolding = new HoldingsModel({
-      name,
-      qty,
-      avg,
-      price: currentPrice,
-      net,
-      day,
+    res.status(201).json({
+      success: true,
+      message: "Order saved and reflected in holdings",
     });
-
-    await newHolding.save();
-    res.send("order saved and reflected into the holdings!");
   } catch (err) {
     console.log(err);
-    res.status(500).send("Error occurs while placing the order");
+    res.status(500).json({ message: "Error occurred while placing the order" });
   }
 });
 
 app.post("/newOrders/sell", async (req, res) => {
-  const { name, qty, price, mode } = req.body;
-  if (!name || !qty || !price) {
-    return res.status(400).send("Missing required fields");
+  const orderInput = normalizeOrderInput(req.body);
+  const validationError = validateOrderInput(orderInput);
+
+  if (validationError) {
+    return res.status(400).json({ message: validationError });
   }
+
   try {
-    let newOrder = new OrdersModel({ name, qty, price, mode });
+    const { name, qty, price, mode } = orderInput;
+    const holding = await HoldingsModel.findOne({ name });
+
+    if (!holding) {
+      return res.status(404).json({ message: "Holding not found for this stock" });
+    }
+
+    if (holding.qty < qty) {
+      return res.status(400).json({ message: "Not enough quantity available to sell" });
+    }
+
+    if (holding.qty === qty) {
+      await HoldingsModel.deleteOne({ _id: holding._id });
+    } else {
+      holding.qty = Number((holding.qty - qty).toFixed(2));
+
+      const { currentPrice, net, day } = calculateMetrics(price, holding.avg);
+      holding.price = currentPrice;
+      holding.net = net;
+      holding.day = day;
+      await holding.save();
+    }
+
+    const newOrder = new OrdersModel({ name, qty, price, mode });
     await newOrder.save();
 
-    let holdings = await HoldingsModel.find({ name }).sort({ _id: 1 });
-
-    let remainingQty = qty;
-
-    for (let holding of holdings) {
-      if (remainingQty === 0) {
-        break;
-      }
-
-      if (holding.qty <= remainingQty) {
-        remainingQty -= holding.qty;
-
-        await HoldingsModel.deleteOne({ _id: holding._id });
-      } else {
-        holding.qty -= remainingQty;
-
-        const newPrice = price + (Math.random() * 10 - 5); // simulate LTP
-        holding.price = newPrice;
-        holding.net =
-          (((newPrice - holding.avg) / holding.avg) * 100).toFixed(2) + "%";
-        holding.day = (Math.random() * 4 - 1).toFixed(2) + "%";
-        await holding.save();
-        remainingQty = 0;
-      }
-    }
-
-    if (remainingQty > 0) {
-      return res.status(400).send("Not enough quantity avaliable to sell");
-    }
-
-    res.send("Order is sold and holdings are updated!");
+    res.status(201).json({
+      success: true,
+      message: "Order sold and holdings updated",
+    });
   } catch (err) {
     console.log(err);
-    res.status(500).send("There is some error in selling order");
+    res.status(500).json({ message: "There was an error while selling the order" });
   }
 });
 
@@ -144,11 +280,20 @@ app.get("/getOrders", async (req, res) => {
 
 app.post("/signup", async (req, res, next) => {
   try {
-    const { email, password, username, createdAt } = req.body;
+    const email = String(req.body.email || "").trim().toLowerCase();
+    const password = String(req.body.password || "");
+    const username = String(req.body.username || "").trim();
+    const createdAt = req.body.createdAt;
+
+    if (!email || !password || !username) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
-      return res.json({ message: "User already exists" });
+      return res.status(409).json({ message: "User already exists" });
     }
+
     const user = await UserModel.create({
       email,
       password,
@@ -156,22 +301,25 @@ app.post("/signup", async (req, res, next) => {
       createdAt,
     });
     const token = CreateSecretToken(user._id);
-    res.cookie("token", token, {
-      withCredentials: true,
-      httpOnly: false,
-    });
+    res.cookie("token", token, cookieOptions);
+
     res
       .status(201)
-      .json({ message: "User signed in successfully", success: true, user });
-    next();
+      .json({
+        message: "User signed up successfully",
+        success: true,
+        user: getSafeUser(user),
+      });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: "Server error during signup" });
   }
 });
 
 app.post("/login", async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const email = String(req.body.email || "").trim().toLowerCase();
+    const password = String(req.body.password || "");
 
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -188,27 +336,35 @@ app.post("/login", async (req, res, next) => {
     }
 
     const token = CreateSecretToken(user._id);
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
-    });
+    res.cookie("token", token, cookieOptions);
 
     res.status(200).json({
       message: "User logged in successfully",
       success: true,
-      user: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-      },
+      user: getSafeUser(user),
     });
-
-    next();
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Server error during login" });
   }
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  if (err.name === "ValidationError") {
+    return res.status(400).json({ message: err.message });
+  }
+
+  if (err.code === 11000) {
+    return res.status(409).json({ message: "Duplicate value detected" });
+  }
+
+  return res.status(500).json({ message: "Internal server error" });
 });
 
 app.listen(PORT, () => {

@@ -1,7 +1,9 @@
 import { useState } from "react";
-import axios from "../api/axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Paper } from "@mui/material";
+
+import axios from "../api/axios";
+import { setStoredUser } from "../utils/auth";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -27,15 +29,14 @@ export default function Login() {
       });
 
       setMessage(res.data.message);
-
-      // Save user to localStorage
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      // Redirect to dashboard
+      setStoredUser(res.data.user);
       navigate("/");
     } catch (error) {
       console.error(error);
-      setMessage("Login failed. Please check your credentials.");
+      setMessage(
+        error.response?.data?.message ||
+          "Login failed. Please check your credentials."
+      );
     }
   };
 
@@ -101,10 +102,10 @@ export default function Login() {
         </form>
 
         <Typography variant="body2" align="center" className="mt-3 text-muted">
-          Don't have an account?
-          <a href="/signup" className="text-decoration-none text-primary">
+          Don&apos;t have an account?{" "}
+          <Link to="/signup" className="text-decoration-none text-primary">
             Sign up here
-          </a>
+          </Link>
         </Typography>
       </Paper>
     </div>

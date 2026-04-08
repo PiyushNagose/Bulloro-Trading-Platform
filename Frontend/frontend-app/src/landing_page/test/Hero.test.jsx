@@ -4,9 +4,9 @@ import Hero from "../Home/Hero";
 describe("Render Hero component", () => {
   test("render hero", () => {
     render(<Hero />);
-    const HeroImg = screen.getByAltText("Hero Image");
-    expect(HeroImg).toBeInTheDocument();
-    expect(HeroImg).toHaveAttribute(
+    const heroImg = screen.getByAltText("Hero Image");
+    expect(heroImg).toBeInTheDocument();
+    expect(heroImg).toHaveAttribute(
       "src",
       expect.stringContaining("homeHero.png")
     );
@@ -15,7 +15,7 @@ describe("Render Hero component", () => {
   test("checking signUp button", () => {
     render(<Hero />);
     const signUpButton = screen.getByRole("button", {
-      name: /Sign Up For Free/i,
+      name: /sign up for free/i,
     });
     expect(signUpButton).toBeInTheDocument();
     expect(signUpButton).toHaveClass("btn-primary");

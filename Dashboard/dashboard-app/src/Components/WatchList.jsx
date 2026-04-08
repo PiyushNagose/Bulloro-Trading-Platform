@@ -1,11 +1,5 @@
-import { watchlist } from "../Data/Data";
-
-import { Tooltip, Grow } from "@mui/material";
-
 import { useState, useContext } from "react";
-import { DoughNutChart } from "./DoughNutChart";
-import GeneralContext from "./GeneralContext";
-
+import { Tooltip, Grow } from "@mui/material";
 import {
   BarChartOutlined,
   KeyboardArrowDown,
@@ -13,8 +7,12 @@ import {
   MoreHoriz,
 } from "@mui/icons-material";
 
+import { watchlist } from "../Data/Data";
+import { DoughNutChart } from "./DoughNutChart";
+import GeneralContext from "./GeneralContext";
+
 export default function WatchList() {
-  const labels = watchlist.map((subArray) => subArray["name"]);
+  const labels = watchlist.map((subArray) => subArray.name);
   const data = {
     labels,
     datasets: [
@@ -43,39 +41,37 @@ export default function WatchList() {
   };
 
   return (
-    <>
-      <div className="watchlist-container">
-        <div className="search-container">
-          <input
-            type="text"
-            name="search"
-            id="search"
-            placeholder="Search eg:infy, bse, nifty fut weekly, gold mcx"
-            className="search"
-          />
-          <span className="counts"> {watchlist.length} / 50</span>
-        </div>
-
-        <ul className="list">
-          {watchlist.map((stock, index) => {
-            return <WatchListContent stock={stock} key={index} />;
-          })}
-        </ul>
-
-        <DoughNutChart data={data} />
+    <div className="watchlist-container">
+      <div className="search-container">
+        <input
+          type="text"
+          name="search"
+          id="search"
+          placeholder="Search eg: infy, bse, nifty fut weekly, gold mcx"
+          className="search"
+        />
+        <span className="counts">{watchlist.length} / 50</span>
       </div>
-    </>
+
+      <ul className="list">
+        {watchlist.map((stock, index) => {
+          return <WatchListContent stock={stock} key={`${stock.name}-${index}`} />;
+        })}
+      </ul>
+
+      <DoughNutChart data={data} />
+    </div>
   );
 }
 
 const WatchListContent = ({ stock }) => {
-  let [showFeaturesOnHover, setShowFeaturesOnHover] = useState(false);
+  const [showFeaturesOnHover, setShowFeaturesOnHover] = useState(false);
 
-  let mouseHoverEnter = (event) => {
+  const mouseHoverEnter = () => {
     setShowFeaturesOnHover(true);
   };
 
-  let mouseHoverLeave = (event) => {
+  const mouseHoverLeave = () => {
     setShowFeaturesOnHover(false);
   };
 
@@ -84,7 +80,7 @@ const WatchListContent = ({ stock }) => {
       <div className="item">
         <p className={stock.isDown ? "down" : "up"}>{stock.name}</p>
 
-        <div className="itemInfo">
+        <div className="item-info">
           <span className="percent">{stock.percent}</span>
           {stock.isDown ? (
             <KeyboardArrowDown className="down" />
@@ -94,16 +90,18 @@ const WatchListContent = ({ stock }) => {
           <span className="price">{stock.price}</span>
         </div>
       </div>
-      {setShowFeaturesOnHover && <WatchListAction uid={stock.name} />}
+      {showFeaturesOnHover && <WatchListAction uid={stock.name} />}
     </li>
   );
 };
 
 const WatchListAction = ({ uid }) => {
   const generalContext = useContext(GeneralContext);
+
   const handleBuyClick = () => {
     generalContext.openBuyWindow(uid);
   };
+
   const handleSellClick = () => {
     generalContext.openSellWindow(uid);
   };

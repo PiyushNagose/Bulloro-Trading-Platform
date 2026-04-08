@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useContext } from "react";
-import axios from "../api/axios";
 
+import axios from "../api/axios";
 import GeneralContext from "./GeneralContext";
 
 import "./BuyActionWindow.css";
@@ -20,6 +20,7 @@ export default function SellActionWindow({ uid }) {
       alert("Please enter valid quantity and price.");
       return;
     }
+
     axios
       .post("/newOrders/sell", {
         name: uid,
@@ -32,7 +33,7 @@ export default function SellActionWindow({ uid }) {
       })
       .catch((err) => {
         console.error("Error placing order", err);
-        alert("Error placing order");
+        alert(err.response?.data?.message || "Error placing order");
       });
   };
 
@@ -69,9 +70,9 @@ export default function SellActionWindow({ uid }) {
       </div>
 
       <div className="buttons">
-        <span>Margin required ₹140.65</span>
+        <span>Margin required Rs. 140.65</span>
         <div>
-          <Link className="btn btn-blue" onClick={handleSellClick}>
+          <Link to="" className="btn btn-blue" onClick={handleSellClick}>
             Sell
           </Link>
           <Link to="" className="btn btn-grey" onClick={handleCancelClick}>

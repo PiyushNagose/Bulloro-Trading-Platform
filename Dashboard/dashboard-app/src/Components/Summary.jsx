@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 
+import { getStoredUser } from "../utils/auth";
+
 export default function Summary() {
   const [username, setUsername] = useState("User");
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUser = getStoredUser();
     if (storedUser?.username) {
       setUsername(storedUser.username);
     }
   }, []);
+
   return (
     <>
       <div className="username">
@@ -42,7 +45,7 @@ export default function Summary() {
 
       <div className="section">
         <span>
-          <p>Holdings (13)</p>
+          <p>Holdings</p>
         </span>
 
         <div className="data">
@@ -50,7 +53,7 @@ export default function Summary() {
             <h3 className="profit">
               1.55k <small>+5.20%</small>
             </h3>
-            <p>P&L</p>
+            <p>P&amp;L</p>
           </div>
           <hr />
 

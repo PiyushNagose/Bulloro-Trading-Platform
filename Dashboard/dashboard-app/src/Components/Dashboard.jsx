@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import App from "./App";
 import Funds from "./Funds";
@@ -8,16 +9,51 @@ import Positions from "./Positions";
 import Summary from "./Summary";
 import WatchList from "./WatchList";
 import { GeneralContextProvider } from "./GeneralContext";
-import { useEffect, useState } from "react";
+import axios from "../api/axios";
+import { clearStoredUser, getStoredUser, setStoredUser } from "../utils/auth";
 
 export default function Dashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser && storedUser.username) {
-      setIsLoggedIn(true);
-    }
+    let isMounted = true;
+
+    const syncAuth = async () => {
+      const storedUser = getStoredUser();
+
+      if (storedUser?.username && isMounted) {
+        setIsLoggedIn(true);
+      }
+
+      try {
+        const res = await axios.get("/auth/me");
+
+        if (!isMounted) {
+          return;
+        }
+
+        setStoredUser(res.data.user);
+        setIsLoggedIn(true);
+      } catch {
+        if (!isMounted) {
+          return;
+        }
+
+        clearStoredUser();
+        setIsLoggedIn(false);
+      } finally {
+        if (isMounted) {
+          setIsCheckingAuth(false);
+        }
+      }
+    };
+
+    syncAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (
@@ -27,9 +63,14 @@ export default function Dashboard() {
 
         <div className="content">
           <Routes>
-            {isLoggedIn ? (
+            {isCheckingAuth ? (
+              <Route
+                path="*"
+                element={<div className="text-center mt-6">Checking session...</div>}
+              />
+            ) : isLoggedIn ? (
               <>
-                <Route exact path="/" element={<Summary />} />
+                <Route path="/" element={<Summary />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/holdings" element={<Holdings />} />
                 <Route path="/positions" element={<Positions />} />
